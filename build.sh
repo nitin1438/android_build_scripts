@@ -9,51 +9,30 @@ set -e
 # Remove existing local_manifests
 crave run --no-patch -- "rm -rf .repo/local_manifests && \
 # Initialize repo with specified manifest
-repo init -u https://github.com/ProjectMatrixx/android.git -b 14.0 --git-lfs ;\
+repo init -u https://github.com/BlissRoms/platform_manifest.git -b universe --git-lfs ;\
 
-# Clone local_manifests repository
-git clone https://github.com/Shirayuki39/treble_manifest.git .repo/local_manifests -b 14 ;\
+# Clone taimen specific repos
+git clone https://github.com/nitin1438/android_device_google_taimen -b universe device/google/taimen ;\
+git clone https://github.com/nitin1438/android_vendor_google_taimen -b universe vendor/google/taimen ;\
+git clone https://github.com/nitin1438/android_device_google_wahoo -b universe device/google/wahoo ;\
+git clone https://github.com/nitin1438/android_kernel_google_wahoo -b universe kernel/google/wahoo ;\
+git clone https://gitlab.com/asriadirahim/vendor_firmware -b udc vendor/firmware ;\
+git clone https://gitlab.com/asriadirahim/packages_apps_googlecamera -b thirteen packages/apps/GoogleCamera ;\
+git clone https://github.com/LineageOS/android_packages_apps_ElmyraService -b lineage-21.0 packages/apps/ElmyraService ;\
 
 # Removals
-rm -rf system/libhidl prebuilts/clang/host/linux-x86 prebuilt/*/webview.apk platform/external/python/pyfakefs platform/external/python/bumble external/chromium-webview/prebuilt/x86_64 platform/external/opencensus-java && \
+# rm -rf system/libhidl prebuilts/clang/host/linux-x86 prebuilt/*/webview.apk platform/external/python/pyfakefs platform/external/python/bumble external/chromium-webview/prebuilt/x86_64 platform/external/opencensus-java && \
 
 # Sync the repositories
 repo sync -c -j$(nproc --all) --force-sync --no-clone-bundle --no-tags && \ 
 
-bash patches/apply-patches.sh . && \
+# bash patches/apply-patches.sh . && \
 
 # Set up build environment
-cd device/phh/treble
-bash generate.sh matrixx && \
+# cd device/phh/treble
+# bash generate.sh matrixx && \
 
-source build/envsetup.sh && \
+# source build/envsetup.sh && \
 
 # Lunch configuration
-lunch treble_arm64_bgN-userdebug ;\
-
-croot ;\
-make systemimage -j$(nproc --all) ; \
-echo "Date and time:" ; \
-
-# Print out/build_date.txt
-cat out/build_date.txt; \
-
-# Print SHA256
-sha256sum out/target/product/*/*.img"
-
-# Clean up
-# rm -rf tissot/*
-
-
-
-# Pull generated zip files
-# crave pull out/target/product/*/*.zip 
-
-# Pull generated img files
-# crave pull out/target/product/*/*.img
-
-# Upload zips to Telegram
-# telegram-upload --to sdreleases tissot/*.zip
-
-#Upload to Github Releases
-#curl -sf https://raw.githubusercontent.com/Meghthedev/Releases/main/headless.sh | sh
+# lunch treble_arm64_bgN-userdebug ;\
